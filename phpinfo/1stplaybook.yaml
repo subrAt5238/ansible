@@ -1,0 +1,25 @@
+---
+- name: install apache2
+  hosts: all
+  become: yes
+  tasks: 
+    - name: install apache2
+      ansible.builtin.apt:
+        name: apache2
+        update_cache: true
+        state: present
+    - name: Installing PHP
+      ansible.builtin.apt:
+        name: 
+          - php
+          - libapache2-mod-php
+          - php-mysql
+        state: present 
+    - name: copyng local to info.php
+      ansible.builtin.copy:    
+        src: ./php.info
+        dest: /var/www/html/info.php
+    - name: restart apache2
+      ansible.builtin.systemd:
+        name: apache2
+        state: restarted

@@ -1,0 +1,16 @@
+---
+- name: instalation of kafka
+  hosts: all
+  become: yes
+  tasks: 
+    - name: instalation of java
+      ansible.builtin.apt:
+        update_cache: yes
+        name: default-jdk 
+        state: present
+    - name: get the the kafaka
+      ansible.builtin.get_url:
+        url: https://downloads.apache.org/kafka/3.3.1/kafka_2.13-3.3.1.tgz
+        dest: /home/jenkins
+  
+

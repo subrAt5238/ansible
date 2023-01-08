@@ -1,0 +1,35 @@
+---
+- name: install tomcat
+  hosts: all
+  become: yes
+  tasks: 
+    - name: install cat in ubuntu
+      ansible.builtin.apt:
+        update_cache: true
+        name: openjdk-11-jdk
+        state: present
+    - name: create tomcat group
+      ansible.builtin.group:
+        name: tomcat
+        state: present
+    - name: Creating a System User
+      ansible.builtin.user:
+        create_home: true
+        home: /opt/tomcat
+        group: tomcat
+        name: tomcat
+        shell: /bin/false
+    - name: get the tar file
+      ansible.builtin.get_url:
+        url: https://www-eu.apache.org/dist/tomcat/tomcat-10/v10.1.4/bin/apache-tomcat-10.1.4.tar.gz
+        dest: /tmp
+    - name: unarchive the package
+      ansible.builtin.unarchive:
+        src: /tmp/apache-tomcat-10.1.4.tar.gz
+        dest: /opt/tomcat/
+        remote_src: yes
+    - name: change the symblink to point
+      ansible.builtin.file:
+        src: /opt/tomcat/apache-tomcat-10.1.4
+        path: /opt/tomcat/latest
+        state: link

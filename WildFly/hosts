@@ -1,0 +1,10 @@
+[webservers]
+secnos ip java_package=java-11-openjdk-devel
+ubuntu ip
+
+[webservers:vars]
+java_package= openjdk-11-jdk
+
+
+
+

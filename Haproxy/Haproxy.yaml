@@ -1,0 +1,65 @@
+---
+- name: main server configuration
+  hosts: subrat
+  become: yes
+  tasks:
+    - name: install haprohy
+      ansible.builtin.apt:
+        update_cache: yes
+        name: haproxy
+        state: present
+    - name: copying the configuration file
+      ansible.builtin.copy:
+        remote_src: yes
+        src: /etc/haproxy/haproxy.cfg
+        dest: /etc/haproxy/haproxy.cfg.bk
+    - name: Insert/Update "Match User" configuration block in /etc/ssh/sshd_config
+      ansible.builtin.blockinfile:
+        path: /etc/haproxy/haproxy.cfg
+        block: |
+          frontend example_front_end
+
+            bind *:80
+
+            option forwardfor  
+
+            default_backend web_servers
+
+          backend web_servers
+
+              balance roundrobin
+
+              server web_servers1 172.31.15.0:80 check
+
+              server web_servers2 172.31.6.210:80 check
+          listen stats
+            bind :32600
+            stats enable
+            stats uri /
+            stats hide-version
+            stats auth subrat:5238
+    - name: restarting service file
+      ansible.builtin.systemd:
+        name: haproxy
+        enabled: true
+        state: restarted
+
+- name: main server configuration
+  hosts: web_servers1
+  become: yes
+  tasks:
+    - name: install apache2
+      ansible.builtin.apt:
+        update_cache: yes
+        name: apache2
+        state: present
+
+- name: main server configuration
+  hosts: web_servers2
+  become: yes
+  tasks:
+    - name: install nginx
+      ansible.builtin.apt:
+        update_cache: yes
+        name: nginx
+        state: present
