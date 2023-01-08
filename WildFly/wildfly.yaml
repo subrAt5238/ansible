@@ -5,9 +5,7 @@
   tasks:
     - name: installing Java 11
       ansible.builtin.package:
-        name:
-          - "{{java_package}}"
-          - "{{httpd_package}}"
+        name: "{{java_package}}"
         state: present
     - name: downloading tar files
       ansible.builtin.get_url :
